@@ -1,17 +1,17 @@
-
-
-# Use the Eclipse alpine official image
-# https://hub.docker.com/_/eclipse-temurin
-FROM eclipse-temurin:21-jdk-alpine
-
-# Create and change to the app directory.
+# Stage 1: build con Maven oficial
+FROM maven:3.10.1-eclipse-temurin-21 AS build
 WORKDIR /app
 
-# Copy files to the container image
-COPY . ./
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-# Build the app.
-RUN ./mvnw -DoutputFile=target/mvn-dependency-list.log -B -DskipTests clean dependency:list install
+COPY src src
+RUN mvn clean package -DskipTests -B
 
-# Run the app by dynamically finding the JAR file in the target directory
-CMD ["sh", "-c", "java -jar target/*.jar"]
+# Stage 2: runtime ligero
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+
+COPY --from=build /app/target/tienda-crochet-0.0.1-SNAPSHOT.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
