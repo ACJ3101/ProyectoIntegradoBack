@@ -1,28 +1,17 @@
-# --- ETAPA 1: Build con Maven + JDK 21 ---
-FROM maven:3.10.1-eclipse-temurin-21 AS build
+
+
+# Use the Eclipse alpine official image
+# https://hub.docker.com/_/eclipse-temurin
+FROM eclipse-temurin:21-jdk-alpine
+
+# Create and change to the app directory.
 WORKDIR /app
 
-# Copiamos solamente pom y descargamos dependencias
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
+# Copy files to the container image
+COPY . ./
 
-# Copiamos el código fuente y compilamos
-COPY src ./src
-RUN mvn clean package -DskipTests -B
+# Build the app.
+RUN ./mvnw -DoutputFile=target/mvn-dependency-list.log -B -DskipTests clean dependency:list install
 
-# --- ETAPA 2: Imagen de ejecución con JRE 21 Alpine ---
-FROM eclipse-temurin:21-jre-alpine AS runtime
-WORKDIR /app
-
-# Opcional: crea un usuario no-root por seguridad
-RUN addgroup -S spring && adduser -S spring -G spring
-USER spring:spring
-
-# Copiamos el JAR “fat” generado
-COPY --from=build /app/target/tienda-crochet-0.0.1-SNAPSHOT.jar app.jar
-
-# Puertos expuestos (igual que tu app Spring Boot)
-EXPOSE 8080
-
-# Comando de arranque
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run the app by dynamically finding the JAR file in the target directory
+CMD ["sh", "-c", "java -jar target/*.jar"]
