@@ -21,7 +21,9 @@ public class Usuario {
     private String nombre;
     private String email;
     private String contraseña;
-    private String rol;
+    private String nick;
+    private String apellidos;
+
     private Date fechaRegistro;
     private String direccion;
 
@@ -29,4 +31,9 @@ public class Usuario {
     @jakarta.persistence.Transient // Opcional para evitar que JPA lo cargue si no lo necesitas aún
     @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Producto> productos;
+    
+    @ManyToOne
+    @JoinColumn(name = "rol_id")
+    private Rol rol;
+
 }

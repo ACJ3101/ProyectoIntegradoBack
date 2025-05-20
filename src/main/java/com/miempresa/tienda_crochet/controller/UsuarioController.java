@@ -31,7 +31,7 @@ public class UsuarioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/crearUsuario")
     public ResponseEntity<Usuario> crear(@RequestBody Usuario usuario) {
         return ResponseEntity.status(201).body(usuarioService.guardar(usuario));
     }
