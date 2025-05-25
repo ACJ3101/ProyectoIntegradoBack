@@ -1,13 +1,20 @@
 package com.miempresa.tienda_crochet.security;
 
+import com.miempresa.tienda_crochet.security.JwtUtil;
+import com.miempresa.tienda_crochet.security.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 public class SecurityConfig {
@@ -20,15 +27,18 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http
+            .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Activa configuración CORS personalizada
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                    "/api/auth/**",        // Rutas públicas
-                    "/api/usuarios/crearUsuario",        // ✅ registro público
+                    "/api/auth/**",        
+                    "/api/usuarios/crearUsuario",     
+                    "/api/usuarios/buscarPorEmail", 
                     "/swagger-ui/**",
                     "/v3/api-docs/**"
                 ).permitAll()
-                .anyRequest().authenticated() // Todo lo demás requiere token
+                .anyRequest().authenticated()
             )
             .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
@@ -40,4 +50,17 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    // ✅ Configuración CORS compatible con JWT y allowCredentials
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(Arrays.asList("http://localhost:4200")); // Solo tu frontend
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setAllowCredentials(true); // Necesario para enviar Authorization o cookies
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 }

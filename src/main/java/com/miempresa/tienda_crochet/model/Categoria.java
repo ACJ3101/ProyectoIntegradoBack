@@ -1,11 +1,13 @@
 package com.miempresa.tienda_crochet.model;
 
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -13,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Rol {
+public class Categoria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,15 +23,13 @@ public class Rol {
 
     private String nombre;
 
-    // Relación inversa (opcional pero útil)
-    @OneToMany(mappedBy = "rol")
-    @JsonIgnore
-    @ToString.Exclude
-    private List<Usuario> usuarios;
+    @OneToMany(mappedBy = "categoria")
+    private List<Producto> productos;
     
-    public Rol(Long id, String nombre) {
+    public Categoria(Long id, String nombre) {
         this.id = id;
         this.nombre = nombre;
     }
+
 
 }

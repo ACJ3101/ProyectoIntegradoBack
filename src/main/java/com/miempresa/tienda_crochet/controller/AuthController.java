@@ -34,6 +34,8 @@ public class AuthController {
 
         Usuario usuario = usuarioOpt.get();
 
+        System.out.println("Contraseña encriptada: " + usuario.getContraseña());
+
         if (!passwordEncoder.matches(request.password(), usuario.getContraseña())) {
             return ResponseEntity.status(401).body("Contraseña incorrecta");
         }

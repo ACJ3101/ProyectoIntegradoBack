@@ -23,7 +23,6 @@ public class Producto {
     private String descripcion;
     private Double precio;
     private int stock;
-    private String categoria;
     private String imagenUrl;
     private boolean publicado;
     private Date fechaCreacion;
@@ -39,4 +38,9 @@ public class Producto {
     @OneToMany(mappedBy = "producto")
     @JsonIgnore
     private List<DetallePedido> detalles;
+    
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
+
 }

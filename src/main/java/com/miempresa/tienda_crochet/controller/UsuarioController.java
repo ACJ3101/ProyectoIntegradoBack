@@ -2,8 +2,11 @@ package com.miempresa.tienda_crochet.controller;
 
 import com.miempresa.tienda_crochet.model.Usuario;
 import com.miempresa.tienda_crochet.service.UsuarioService;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,4 +44,23 @@ public class UsuarioController {
         usuarioService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/buscarPorEmail")
+    public ResponseEntity<Usuario> buscarPorEmail(@RequestParam String email) {
+        Optional<Usuario> usuario = usuarioService.obtenerPorEmail(email);
+        return usuario.map(ResponseEntity::ok)
+                      .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<Usuario> getUsuarioAutenticado(Authentication authentication) {
+        String email = authentication.getName(); // extraído del token JWT
+        Optional<Usuario> usuario = usuarioService.obtenerPorEmail(email);
+
+        return usuario
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+
 }
