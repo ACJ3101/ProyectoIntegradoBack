@@ -5,6 +5,7 @@ import com.miempresa.tienda_crochet.repository.CategoriaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoriaService {
@@ -22,4 +23,10 @@ public class CategoriaService {
     public Categoria guardar(Categoria categoria) {
         return categoriaRepository.save(categoria);
     }
+   
+    public Categoria obtenerPorId(Long id) {
+        return categoriaRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+    }
+
 }

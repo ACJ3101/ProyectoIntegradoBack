@@ -1,6 +1,11 @@
 package com.miempresa.tienda_crochet.controller;
 
+import com.miempresa.tienda_crochet.dto.ProductoDTO;
+import com.miempresa.tienda_crochet.dto.ProductoUpdateDTO;
+import com.miempresa.tienda_crochet.mapper.ProductoMapper;
+import com.miempresa.tienda_crochet.model.Categoria;
 import com.miempresa.tienda_crochet.model.Producto;
+import com.miempresa.tienda_crochet.service.CategoriaService;
 import com.miempresa.tienda_crochet.service.ProductoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,19 +19,24 @@ import java.util.Optional;
 public class ProductoController {
 
     private final ProductoService productoService;
+    private final CategoriaService categoriaService;
 
-    public ProductoController(ProductoService productoService) {
+    public ProductoController(ProductoService productoService, CategoriaService categoriaService) {
         this.productoService = productoService;
+        this.categoriaService = categoriaService;
     }
-
     @GetMapping
-    public List<Producto> listar() {
-        return productoService.listarTodos();
+    public List<ProductoDTO> listarProductos() {
+        return productoService.listarTodos()
+                .stream()
+                .map(ProductoMapper::toDto)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Producto> obtener(@PathVariable Long id) {
+    public ResponseEntity<ProductoDTO> obtenerPorId(@PathVariable Long id) {
         return productoService.obtenerPorId(id)
+                .map(ProductoMapper::toDto)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -41,4 +51,52 @@ public class ProductoController {
         productoService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/categoria/{categoriaId}")
+    public ResponseEntity<List<ProductoDTO>> obtenerPorCategoria(@PathVariable Long categoriaId) {
+        List<Producto> productos = productoService.obtenerPorCategoriaId(categoriaId);
+        List<ProductoDTO> productosDTO = productos.stream()
+                .map(ProductoMapper::toDto)
+                .toList();
+        return ResponseEntity.ok(productosDTO);
+    }
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<ProductoDTO>> obtenerProductosPorUsuario(@PathVariable Long usuarioId) {
+        List<Producto> productos = productoService.obtenerPorUsuarioId(usuarioId);
+        List<ProductoDTO> productosDTO = productos.stream()
+                .map(ProductoMapper::toDto)
+                .toList();
+        return ResponseEntity.ok(productosDTO);
+    }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> actualizarProducto(
+            @PathVariable Long id,
+            @RequestBody ProductoUpdateDTO dto) {
+
+        Optional<Producto> productoOpt = productoService.obtenerPorId(id);
+
+        if (productoOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Producto producto = productoOpt.get();
+
+        producto.setNombre(dto.getNombre());
+        producto.setDescripcion(dto.getDescripcion());
+        producto.setPrecio(dto.getPrecio());
+        producto.setStock(dto.getStock());
+        producto.setImagenUrl(dto.getImagenUrl());
+        producto.setPublicado(dto.isPublicado());
+
+        // Cargar la categoría por ID
+        Categoria categoria = categoriaService.obtenerPorId(dto.getCategoriaId());
+        producto.setCategoria(categoria);
+
+        return ResponseEntity.ok(productoService.guardar(producto));
+    }
+
+
+
+
 }

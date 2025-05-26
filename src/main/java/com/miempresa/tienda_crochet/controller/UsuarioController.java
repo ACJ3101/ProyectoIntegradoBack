@@ -1,5 +1,7 @@
 package com.miempresa.tienda_crochet.controller;
 
+import com.miempresa.tienda_crochet.dto.UsuarioDTO;
+import com.miempresa.tienda_crochet.mapper.UsuarioMapper;
 import com.miempresa.tienda_crochet.model.Usuario;
 import com.miempresa.tienda_crochet.service.UsuarioService;
 
@@ -23,14 +25,17 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public List<Usuario> listar() {
-        return usuarioService.listarTodos();
+    public List<UsuarioDTO> listar() {
+        return usuarioService.listarTodos()
+                .stream()
+                .map(UsuarioMapper::toDto)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> obtener(@PathVariable Long id) {
+    public ResponseEntity<UsuarioDTO> obtener(@PathVariable Long id) {
         return usuarioService.obtenerPorId(id)
-                .map(ResponseEntity::ok)
+                .map(usuario -> ResponseEntity.ok(UsuarioMapper.toDto(usuario)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -46,20 +51,18 @@ public class UsuarioController {
     }
     
     @GetMapping("/buscarPorEmail")
-    public ResponseEntity<Usuario> buscarPorEmail(@RequestParam String email) {
-        Optional<Usuario> usuario = usuarioService.obtenerPorEmail(email);
-        return usuario.map(ResponseEntity::ok)
-                      .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<UsuarioDTO> buscarPorEmail(@RequestParam String email) {
+        return usuarioService.obtenerPorEmail(email)
+                .map(usuario -> ResponseEntity.ok(UsuarioMapper.toDto(usuario)))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/me")
-    public ResponseEntity<Usuario> getUsuarioAutenticado(Authentication authentication) {
-        String email = authentication.getName(); // extraído del token JWT
-        Optional<Usuario> usuario = usuarioService.obtenerPorEmail(email);
-
-        return usuario
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    public ResponseEntity<UsuarioDTO> getUsuarioAutenticado(Authentication authentication) {
+        String email = authentication.getName();
+        return usuarioService.obtenerPorEmail(email)
+                .map(usuario -> ResponseEntity.ok(UsuarioMapper.toDto(usuario)))
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
 
