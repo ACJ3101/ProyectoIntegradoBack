@@ -27,10 +27,12 @@ public class Usuario {
     private Date fechaRegistro;
     private String direccion;
 
-    @OneToMany(mappedBy = "usuario")
+    
     @jakarta.persistence.Transient // Opcional para evitar que JPA lo cargue si no lo necesitas aún
     @com.fasterxml.jackson.annotation.JsonIgnore
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Producto> productos;
+
     
     @ManyToOne
     @JoinColumn(name = "rol_id")

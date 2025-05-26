@@ -94,18 +94,17 @@ public class ProductoController {
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<Producto> actualizarProducto(
+    public ResponseEntity<ProductoDTO> actualizarProducto(
             @PathVariable Long id,
             @RequestBody ProductoUpdateDTO dto) {
 
         Optional<Producto> productoOpt = productoService.obtenerPorId(id);
-
         if (productoOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
         Producto producto = productoOpt.get();
-
+        // Actualizar campos...
         producto.setNombre(dto.getNombre());
         producto.setDescripcion(dto.getDescripcion());
         producto.setPrecio(dto.getPrecio());
@@ -113,13 +112,12 @@ public class ProductoController {
         producto.setImagenUrl(dto.getImagenUrl());
         producto.setPublicado(dto.isPublicado());
 
-        // Cargar la categoría por ID
         Categoria categoria = categoriaService.obtenerPorId(dto.getCategoriaId());
         producto.setCategoria(categoria);
 
-        return ResponseEntity.ok(productoService.guardar(producto));
+        Producto actualizado = productoService.guardar(producto);
+        return ResponseEntity.ok(ProductoMapper.toDto(actualizado));
     }
-
 
 
 

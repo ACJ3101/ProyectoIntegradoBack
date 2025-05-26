@@ -80,21 +80,23 @@ public class UsuarioController {
     @PutMapping("/{id}/cambiarContrasena")
     public ResponseEntity<String> cambiarContrasena(
             @PathVariable Long id,
-            @RequestBody String nuevaContrasena) {
+            @RequestBody CambioContrasenaDTO dto) {
 
+        String nuevaContrasena = dto.getNuevaContrasena();
         Optional<String> resultado = usuarioService.actualizarContrasena(id, nuevaContrasena);
 
-        if (resultado.isPresent()) {
-            String mensaje = resultado.get();
-            if (mensaje.equals("Contraseña actualizada correctamente.")) {
-                return ResponseEntity.ok(mensaje);
-            } else {
-                return ResponseEntity.badRequest().body(mensaje);
-            }
+        if (resultado.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        String mensaje = resultado.get();
+        if (mensaje.equals("Contraseña actualizada correctamente.")) {
+            return ResponseEntity.ok(mensaje);
+        } else {
+            return ResponseEntity.badRequest().body(mensaje);
+        }
     }
+
 
 
 

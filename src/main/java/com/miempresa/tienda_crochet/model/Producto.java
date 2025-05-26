@@ -27,10 +27,7 @@ public class Producto {
     private boolean publicado;
     private Date fechaCreacion;
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
-
+    
     @OneToMany(mappedBy = "producto")
     @JsonIgnore
     private List<ComentarioProducto> comentarios;
@@ -38,6 +35,11 @@ public class Producto {
     @OneToMany(mappedBy = "producto")
     @JsonIgnore
     private List<DetallePedido> detalles;
+    
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
     
     @ManyToOne
     @JoinColumn(name = "categoria_id")

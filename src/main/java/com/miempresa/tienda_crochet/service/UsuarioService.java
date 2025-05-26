@@ -76,21 +76,19 @@ public class UsuarioService {
     public Optional<String> actualizarContrasena(Long id, String nuevaContrasena) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
 
-        if (usuarioOpt.isPresent()) {
-            Usuario usuario = usuarioOpt.get();
-
-            // Verificar si la nueva contraseña es igual a la actual
-            if (passwordEncoder.matches(nuevaContrasena, usuario.getContraseña())) {
-                return Optional.of("La nueva contraseña no puede ser igual a la actual.");
-            }
-
-            // Encriptar y guardar
-            usuario.setContraseña(passwordEncoder.encode(nuevaContrasena));
-            usuarioRepository.save(usuario);
-            return Optional.of("Contraseña actualizada correctamente.");
+        if (usuarioOpt.isEmpty()) {
+            return Optional.empty(); // Usuario no encontrado
         }
 
-        return Optional.of("Usuario no encontrado.");
+        Usuario usuario = usuarioOpt.get();
+
+        if (passwordEncoder.matches(nuevaContrasena, usuario.getContraseña())) {
+            return Optional.of("La nueva contraseña no puede ser igual a la actual.");
+        }
+
+        usuario.setContraseña(passwordEncoder.encode(nuevaContrasena));
+        usuarioRepository.save(usuario);
+        return Optional.of("Contraseña actualizada correctamente.");
     }
 
 
