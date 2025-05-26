@@ -22,7 +22,7 @@ public class TiendaCrochetApplication {
 			// 🛡️ Inicializar roles si están vacíos
 			if (rolRepository.findAll().isEmpty()) {
 				rolRepository.save(new Rol(null, "CLIENTE"));
-				rolRepository.save(new Rol(null, "CREADOR"));
+				rolRepository.save(new Rol(null, "VENDEDOR"));
 				rolRepository.save(new Rol(null, "ADMIN"));
 			}
 

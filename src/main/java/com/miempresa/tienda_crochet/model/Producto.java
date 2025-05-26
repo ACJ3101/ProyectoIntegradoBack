@@ -42,5 +42,18 @@ public class Producto {
     @ManyToOne
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
+    
+    @Transient
+    private Double calidad;
+
+    public Double getCalidad() {
+        if (comentarios == null || comentarios.isEmpty()) {
+            return null; // o 0.0 si prefieres
+        }
+        return comentarios.stream()
+                          .mapToInt(ComentarioProducto::getCalificacion)
+                          .average()
+                          .orElse(0.0);
+    }
 
 }

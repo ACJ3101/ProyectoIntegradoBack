@@ -1,5 +1,6 @@
 package com.miempresa.tienda_crochet.service;
 
+import com.miempresa.tienda_crochet.dto.UsuarioUpdateDTO;
 import com.miempresa.tienda_crochet.model.Rol;
 import com.miempresa.tienda_crochet.model.Usuario;
 import com.miempresa.tienda_crochet.repository.RolRepository;
@@ -52,6 +53,47 @@ public class UsuarioService {
     public Optional<Usuario> obtenerPorEmail(String email) {
         return usuarioRepository.findByEmail(email);
     }
+
+    public Optional<Usuario> actualizarUsuario(Long id, UsuarioUpdateDTO dto) {
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(id);
+        if (optionalUsuario.isEmpty()) return Optional.empty();
+
+        Usuario usuario = optionalUsuario.get();
+
+        usuario.setNombre(dto.getNombre());
+        usuario.setApellidos(dto.getApellidos());
+        usuario.setEmail(dto.getEmail());
+        usuario.setDireccion(dto.getDireccion());
+        usuario.setNick(dto.getNick());
+
+        if (dto.getRolId() != null) {
+            rolRepository.findById(dto.getRolId()).ifPresent(usuario::setRol);
+        }
+
+        return Optional.of(usuarioRepository.save(usuario));
+    }
+    
+    public Optional<String> actualizarContrasena(Long id, String nuevaContrasena) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
+
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+
+            // Verificar si la nueva contraseña es igual a la actual
+            if (passwordEncoder.matches(nuevaContrasena, usuario.getContraseña())) {
+                return Optional.of("La nueva contraseña no puede ser igual a la actual.");
+            }
+
+            // Encriptar y guardar
+            usuario.setContraseña(passwordEncoder.encode(nuevaContrasena));
+            usuarioRepository.save(usuario);
+            return Optional.of("Contraseña actualizada correctamente.");
+        }
+
+        return Optional.of("Usuario no encontrado.");
+    }
+
+
 
     
 }

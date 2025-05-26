@@ -1,6 +1,8 @@
 package com.miempresa.tienda_crochet.controller;
 
+import com.miempresa.tienda_crochet.dto.CambioContrasenaDTO;
 import com.miempresa.tienda_crochet.dto.UsuarioDTO;
+import com.miempresa.tienda_crochet.dto.UsuarioUpdateDTO;
 import com.miempresa.tienda_crochet.mapper.UsuarioMapper;
 import com.miempresa.tienda_crochet.model.Usuario;
 import com.miempresa.tienda_crochet.service.UsuarioService;
@@ -64,6 +66,37 @@ public class UsuarioController {
                 .map(usuario -> ResponseEntity.ok(UsuarioMapper.toDto(usuario)))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuario> actualizarUsuario(
+            @PathVariable Long id,
+            @RequestBody UsuarioUpdateDTO dto) {
+
+        return usuarioService.actualizarUsuario(id, dto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @PutMapping("/{id}/cambiarContrasena")
+    public ResponseEntity<String> cambiarContrasena(
+            @PathVariable Long id,
+            @RequestBody String nuevaContrasena) {
+
+        Optional<String> resultado = usuarioService.actualizarContrasena(id, nuevaContrasena);
+
+        if (resultado.isPresent()) {
+            String mensaje = resultado.get();
+            if (mensaje.equals("Contraseña actualizada correctamente.")) {
+                return ResponseEntity.ok(mensaje);
+            } else {
+                return ResponseEntity.badRequest().body(mensaje);
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+    }
+
+
 
 
 }

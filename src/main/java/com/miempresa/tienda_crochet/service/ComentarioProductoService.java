@@ -31,4 +31,9 @@ public class ComentarioProductoService {
     public void eliminar(Long id) {
         comentarioProductoRepository.deleteById(id);
     }
+    
+    public List<ComentarioProducto> obtenerPorProductoId(Long productoId) {
+        return comentarioProductoRepository.findByProductoId(productoId);
+    }
+
 }

@@ -11,7 +11,7 @@ import java.util.Date;
 public class JwtUtil {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    private final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 15; // 15 minutos
+    private final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 1; // 15 minutos
     private final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7; // 7 días
 
     public String generateAccessToken(String username) {

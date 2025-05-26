@@ -1,15 +1,18 @@
 package com.miempresa.tienda_crochet.controller;
 
+import com.miempresa.tienda_crochet.dto.ProductoCreateDTO;
 import com.miempresa.tienda_crochet.dto.ProductoDTO;
 import com.miempresa.tienda_crochet.dto.ProductoUpdateDTO;
 import com.miempresa.tienda_crochet.mapper.ProductoMapper;
 import com.miempresa.tienda_crochet.model.Categoria;
 import com.miempresa.tienda_crochet.model.Producto;
+import com.miempresa.tienda_crochet.model.Usuario;
 import com.miempresa.tienda_crochet.service.CategoriaService;
 import com.miempresa.tienda_crochet.service.ProductoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,9 +45,30 @@ public class ProductoController {
     }
 
     @PostMapping
-    public ResponseEntity<Producto> crear(@RequestBody Producto producto) {
-        return ResponseEntity.status(201).body(productoService.guardar(producto));
+    public ResponseEntity<Producto> crearProducto(@RequestBody ProductoCreateDTO dto) {
+        Producto producto = new Producto();
+        producto.setNombre(dto.getNombre());
+        producto.setDescripcion(dto.getDescripcion());
+        producto.setPrecio(dto.getPrecio());
+        producto.setStock(dto.getStock());
+        producto.setImagenUrl(dto.getImagenUrl());
+        producto.setPublicado(dto.isPublicado());
+        producto.setFechaCreacion(new Date());
+
+        // Asignar Usuario
+        Usuario usuario = new Usuario();
+        usuario.setId(dto.getUsuarioId());
+        producto.setUsuario(usuario);
+
+        // Asignar Categoría
+        Categoria categoria = new Categoria();
+        categoria.setId(dto.getCategoriaId());
+        producto.setCategoria(categoria);
+
+        Producto guardado = productoService.guardar(producto);
+        return ResponseEntity.status(201).body(guardado);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {

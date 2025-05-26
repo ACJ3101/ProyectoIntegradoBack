@@ -35,14 +35,16 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/api/auth/**",        
-                    "/api/usuarios/crearUsuario",     
-                    "/api/usuarios/buscarPorEmail", 
+                    "/api/usuarios/crearUsuario",  
+                    "/api/usuarios/{id}",
+                    "/api/usuarios/buscarPorEmail",
+                    "/api/comentarios/**",
                     "/swagger-ui/**",
                     "/v3/api-docs/**"
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET,
-                	    "/api/productos",                         // Público
-                	    "/api/productos/categoria/**"             // Público
+                	    "/api/productos/**",                         // Público
+                	    "/api/categorias/**"             // Público
                 	).permitAll()
                 .anyRequest().authenticated()
             )
