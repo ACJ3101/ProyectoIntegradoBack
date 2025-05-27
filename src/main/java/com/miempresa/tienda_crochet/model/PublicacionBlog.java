@@ -6,6 +6,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Date;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Getter
 @Setter
@@ -25,4 +28,9 @@ public class PublicacionBlog {
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private Usuario autor;
+    
+    @OneToMany(mappedBy = "publicacion")
+    @JsonIgnore
+    private List<ComentarioBlog> comentarios;
+
 }

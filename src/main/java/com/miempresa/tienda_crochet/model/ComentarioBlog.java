@@ -5,24 +5,27 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @ToString
 @Entity
-public class DetallePedido {
+public class ComentarioBlog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int cantidad;
-    private Double precioUnitario;
+    private String comentario;
+    private int calificacion;
+    private Date fecha;
 
     @ManyToOne
-    @JoinColumn(name = "pedido_id")
-    private Pedido pedido;
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 
     @ManyToOne
-    @JoinColumn(name = "producto_id")
-    private Producto producto;
+    @JoinColumn(name = "publicacion_id")
+    private PublicacionBlog publicacion;
 }

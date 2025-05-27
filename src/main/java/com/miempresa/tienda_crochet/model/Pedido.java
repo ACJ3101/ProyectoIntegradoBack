@@ -27,7 +27,8 @@ public class Pedido {
     @JoinColumn(name = "usuario_id")
     private Usuario cliente;
 
-    @OneToMany(mappedBy = "pedido")
-    @JsonIgnore
-    private List<DetallePedido> detalles;
+    @ElementCollection
+    @CollectionTable(name = "pedido_productos", joinColumns = @JoinColumn(name = "pedido_id"))
+    @Column(name = "producto_id")
+    private List<Long> productoIds;
 }
