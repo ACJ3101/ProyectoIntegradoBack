@@ -43,8 +43,9 @@ public class SecurityConfig {
                     "/v3/api-docs/**"
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET,
-                	    "/api/productos/**",                         // Público
-                	    "/api/categorias/**"             // Público
+                	    "/api/productos/**",     
+                	    "/api/categorias/**",
+                	    "/api/publicaciones/**"
                 	).permitAll()
                 .anyRequest().authenticated()
             )
