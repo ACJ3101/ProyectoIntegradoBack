@@ -32,9 +32,6 @@ public class Producto {
     @JsonIgnore
     private List<ComentarioProducto> comentarios;
 
-    @OneToMany(mappedBy = "producto")
-    @JsonIgnore
-    private List<DetallePedido> detalles;
     
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)

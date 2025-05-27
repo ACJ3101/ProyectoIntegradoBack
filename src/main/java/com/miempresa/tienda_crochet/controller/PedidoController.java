@@ -1,7 +1,9 @@
 package com.miempresa.tienda_crochet.controller;
 
+import com.miempresa.tienda_crochet.dto.PedidoDTO;
 import com.miempresa.tienda_crochet.model.Pedido;
 import com.miempresa.tienda_crochet.service.PedidoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +33,12 @@ public class PedidoController {
     }
 
     @PostMapping
-    public ResponseEntity<Pedido> crear(@RequestBody Pedido pedido) {
-        return ResponseEntity.status(201).body(pedidoService.guardar(pedido));
+    public ResponseEntity<Pedido> crearPedido(@RequestBody PedidoDTO dto) {
+        Pedido nuevoPedido = pedidoService.crearDesdeDTO(dto);
+        if (nuevoPedido == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPedido);
     }
 
     @DeleteMapping("/{id}")

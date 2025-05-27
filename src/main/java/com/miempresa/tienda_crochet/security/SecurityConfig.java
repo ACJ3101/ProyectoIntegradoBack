@@ -40,11 +40,12 @@ public class SecurityConfig {
                     "/api/usuarios/buscarPorEmail",
                     "/api/comentarios/**",
                     "/swagger-ui/**",
-                    "/v3/api-docs/**"
+                    "/v3/api-docs/**",
+                    "/api/publicaciones/**"
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET,
-                	    "/api/productos/**",                         // Público
-                	    "/api/categorias/**"             // Público
+                	    "/api/productos/**",     
+                	    "/api/categorias/**"
                 	).permitAll()
                 .anyRequest().authenticated()
             )

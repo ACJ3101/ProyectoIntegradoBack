@@ -8,6 +8,8 @@ import lombok.ToString;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Getter
 @Setter
 @ToString(exclude = "productos") // Excluye productos para evitar recursión infinita
@@ -37,5 +39,10 @@ public class Usuario {
     @ManyToOne
     @JoinColumn(name = "rol_id")
     private Rol rol;
+    
+    @OneToMany(mappedBy = "usuario")
+    @JsonIgnore
+    private List<ComentarioBlog> comentariosBlog;
+
 
 }
