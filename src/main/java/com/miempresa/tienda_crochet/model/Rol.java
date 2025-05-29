@@ -2,14 +2,12 @@ package com.miempresa.tienda_crochet.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "usuarios")
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -21,15 +19,12 @@ public class Rol {
 
     private String nombre;
 
-    // Relación inversa (opcional pero útil)
-    @OneToMany(mappedBy = "rol")
+    @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    @ToString.Exclude
     private List<Usuario> usuarios;
-    
+
     public Rol(Long id, String nombre) {
         this.id = id;
         this.nombre = nombre;
     }
-
 }

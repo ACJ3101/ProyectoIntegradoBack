@@ -4,14 +4,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
-@ToString(exclude = "detalles")
+@ToString
 @Entity
 public class Pedido {
 
@@ -24,7 +23,7 @@ public class Pedido {
     private Double total;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario cliente;
 
     @ElementCollection

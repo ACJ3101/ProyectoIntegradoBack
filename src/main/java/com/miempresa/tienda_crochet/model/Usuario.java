@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Getter
 @Setter
-@ToString(exclude = "productos") // Excluye productos para evitar recursión infinita
+@ToString(exclude = {"productos", "comentariosBlog", "comentariosProducto", "publicaciones", "pedidos"})
 @Entity
 public class Usuario {
 
@@ -29,20 +29,33 @@ public class Usuario {
     private Date fechaRegistro;
     private String direccion;
 
-    
-    @jakarta.persistence.Transient // Opcional para evitar que JPA lo cargue si no lo necesitas aún
-    @com.fasterxml.jackson.annotation.JsonIgnore
+    // 🔄 Productos creados por el usuario
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Producto> productos;
 
-    
-    @ManyToOne
-    @JoinColumn(name = "rol_id")
-    private Rol rol;
-    
-    @OneToMany(mappedBy = "usuario")
+    // 🔄 Comentarios en publicaciones del blog
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<ComentarioBlog> comentariosBlog;
 
+    // 🔄 Comentarios en productos
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<ComentarioProducto> comentariosProducto;
 
+    // 🔄 Publicaciones del blog creadas por el usuario
+    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<PublicacionBlog> publicaciones;
+
+    // 🔄 Pedidos realizados por el usuario
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Pedido> pedidos;
+
+    // 🔗 Rol del usuario
+    @ManyToOne
+    @JoinColumn(name = "rol_id")
+    private Rol rol;
 }

@@ -6,6 +6,6 @@ import lombok.Data;
 public class ComentarioBlogDTO {
     private String comentario;
     private int calificacion;
-    private Long usuarioId;
+    private String usuarioNick; 
     private Long publicacionId;
 }

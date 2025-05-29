@@ -44,8 +44,8 @@ public class TiendaCrochetApplication {
 	            categoriaRepository.save(new Categoria(null, "Temporada"));
 	        }
 
-	        // 🔐 Crear usuario administrador si no existe
-	        if (usuarioRepository.findByEmail("admin@crochet.com").isEmpty()) {
+	     // 🔐 Crear usuario administrador si no existe
+	        if (usuarioRepository.findByEmail("admin@tienda.com").isEmpty()) {
 	            Rol rolAdmin = rolRepository.findByNombre("ADMIN").orElse(null);
 
 	            if (rolAdmin != null) {
@@ -67,7 +67,8 @@ public class TiendaCrochetApplication {
 	        } else {
 	            System.out.println("ℹ️ El usuario administrador ya existe.");
 	        }
-	    };
-	}
 
+	};
+
+}
 }

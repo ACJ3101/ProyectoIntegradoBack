@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -35,7 +36,7 @@ public class ComentarioBlogController {
 
     @PostMapping
     public ResponseEntity<ComentarioBlog> crearComentario(@RequestBody ComentarioBlogDTO dto) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.findById(dto.getUsuarioId());
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByNick(dto.getUsuarioNick());
         Optional<PublicacionBlog> publicacionOpt = publicacionBlogRepository.findById(dto.getPublicacionId());
 
         if (usuarioOpt.isEmpty() || publicacionOpt.isEmpty()) {
@@ -51,4 +52,23 @@ public class ComentarioBlogController {
 
         return ResponseEntity.status(201).body(comentarioBlogRepository.save(comentario));
     }
+
+    @GetMapping("/publicacion/{id}")
+    public ResponseEntity<List<ComentarioBlogDTO>> obtenerPorPublicacion(@PathVariable Long id) {
+        List<ComentarioBlog> comentarios = comentarioBlogRepository.findByPublicacionId(id);
+
+        List<ComentarioBlogDTO> comentariosDTO = comentarios.stream().map(comentario -> {
+            ComentarioBlogDTO dto = new ComentarioBlogDTO();
+            dto.setComentario(comentario.getComentario());
+            dto.setCalificacion(comentario.getCalificacion());
+            dto.setUsuarioNick(comentario.getUsuario().getNick()); // Aquí se toma el nick
+            dto.setPublicacionId(comentario.getPublicacion().getId());
+            return dto;
+        }).toList();
+
+        return ResponseEntity.ok(comentariosDTO);
+    }
+
+    
+    
 }

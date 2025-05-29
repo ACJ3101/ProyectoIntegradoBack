@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@ToString(exclude = {"comentarios", "detalles"})
+@ToString(exclude = {"comentarios"})
 @Entity
 public class Producto {
 
@@ -27,32 +27,32 @@ public class Producto {
     private boolean publicado;
     private Date fechaCreacion;
 
-    
-    @OneToMany(mappedBy = "producto")
+    // 📝 Comentarios sobre el producto (se eliminan en cascada si se borra el producto)
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<ComentarioProducto> comentarios;
 
-    
+    // 👤 Usuario creador del producto
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    
+    // 🗂️ Categoría del producto
     @ManyToOne
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
-    
+
+    // ⭐ Calidad calculada a partir de los comentarios
     @Transient
     private Double calidad;
 
     public Double getCalidad() {
         if (comentarios == null || comentarios.isEmpty()) {
-            return null; // o 0.0 si prefieres
+            return null;
         }
         return comentarios.stream()
                           .mapToInt(ComentarioProducto::getCalificacion)
                           .average()
                           .orElse(0.0);
     }
-
 }
