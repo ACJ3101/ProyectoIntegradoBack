@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "comentarios") // Evita recursión infinita en logs
 @Entity
 public class PublicacionBlog {
 
@@ -25,12 +25,13 @@ public class PublicacionBlog {
     private Date fecha;
     private String categoria;
 
+    // ✍️ Autor de la publicación (relación con Usuario)
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario autor;
-    
-    @OneToMany(mappedBy = "publicacion")
+
+    // 💬 Comentarios asociados a la publicación
+    @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<ComentarioBlog> comentarios;
-
 }

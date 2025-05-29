@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"usuario", "publicacion"}) // Evita recursión en logs
 @Entity
 public class ComentarioBlog {
 
@@ -21,11 +21,13 @@ public class ComentarioBlog {
     private int calificacion;
     private Date fecha;
 
-    @ManyToOne
+    // 🧑 Relación con el autor del comentario
+    @ManyToOne(optional = false)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    @ManyToOne
+    // 📝 Relación con la publicación del blog
+    @ManyToOne(optional = false)
     @JoinColumn(name = "publicacion_id")
     private PublicacionBlog publicacion;
 }

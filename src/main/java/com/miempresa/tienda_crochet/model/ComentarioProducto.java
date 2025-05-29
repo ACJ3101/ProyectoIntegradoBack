@@ -21,11 +21,13 @@ public class ComentarioProducto {
     private int calificacion;
     private Date fecha;
 
+    // 🧑‍💬 Autor del comentario (borrado en cascada si se borra el usuario)
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
+    // 🛍️ Producto comentado (borrado en cascada si se borra el producto)
     @ManyToOne
-    @JoinColumn(name = "producto_id")
+    @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 }

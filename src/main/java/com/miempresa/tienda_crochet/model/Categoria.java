@@ -3,15 +3,11 @@ package com.miempresa.tienda_crochet.model;
 import java.util.List;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "productos")
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -23,13 +19,11 @@ public class Categoria {
 
     private String nombre;
 
-    @OneToMany(mappedBy = "categoria")
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Producto> productos;
-    
+
     public Categoria(Long id, String nombre) {
         this.id = id;
         this.nombre = nombre;
     }
-
-
 }
