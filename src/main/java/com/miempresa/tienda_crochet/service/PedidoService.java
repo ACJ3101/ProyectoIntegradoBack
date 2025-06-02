@@ -52,4 +52,9 @@ public class PedidoService {
 
         return pedidoRepository.save(pedido);
     }
+    
+    public List<Pedido> listarPorUsuarioId(Long usuarioId) {
+        return pedidoRepository.findByClienteId(usuarioId);
+    }
+
 }
