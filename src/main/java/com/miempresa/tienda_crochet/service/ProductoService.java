@@ -1,6 +1,7 @@
 package com.miempresa.tienda_crochet.service;
 
 import com.miempresa.tienda_crochet.dto.ProductoDTO;
+import com.miempresa.tienda_crochet.dto.StockUpdateDTO;
 import com.miempresa.tienda_crochet.mapper.ProductoMapper;
 import com.miempresa.tienda_crochet.model.Producto;
 import com.miempresa.tienda_crochet.repository.ProductoRepository;
@@ -46,5 +47,15 @@ public class ProductoService {
         return productoRepository.findByUsuarioId(usuarioId);
         
     }
+    public void actualizarStock(List<StockUpdateDTO> lista) {
+        for (StockUpdateDTO item : lista) {
+            productoRepository.findById(item.getProductoId()).ifPresent(producto -> {
+                int nuevoStock = producto.getStock() - item.getCantidadVendida();
+                producto.setStock(Math.max(nuevoStock, 0)); // Evita negativos
+                productoRepository.save(producto);
+            });
+        }
+    }
+
 
 }

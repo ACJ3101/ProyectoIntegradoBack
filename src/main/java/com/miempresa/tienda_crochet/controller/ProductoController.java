@@ -3,6 +3,7 @@ package com.miempresa.tienda_crochet.controller;
 import com.miempresa.tienda_crochet.dto.ProductoCreateDTO;
 import com.miempresa.tienda_crochet.dto.ProductoDTO;
 import com.miempresa.tienda_crochet.dto.ProductoUpdateDTO;
+import com.miempresa.tienda_crochet.dto.StockUpdateListDTO;
 import com.miempresa.tienda_crochet.mapper.ProductoMapper;
 import com.miempresa.tienda_crochet.model.Categoria;
 import com.miempresa.tienda_crochet.model.Producto;
@@ -118,6 +119,13 @@ public class ProductoController {
         Producto actualizado = productoService.guardar(producto);
         return ResponseEntity.ok(ProductoMapper.toDto(actualizado));
     }
+    
+    @PostMapping("/actualizar-stock")
+    public ResponseEntity<Void> actualizarStock(@RequestBody StockUpdateListDTO dto) {
+        productoService.actualizarStock(dto.getProductos());
+        return ResponseEntity.ok().build();
+    }
+
 
 
 

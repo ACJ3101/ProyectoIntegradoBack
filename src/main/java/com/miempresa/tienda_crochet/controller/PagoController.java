@@ -57,4 +57,20 @@ public class PagoController {
     public ResponseEntity<String> obtenerClavePublica() {
         return ResponseEntity.ok(publicKey);
     }
+    
+    @GetMapping("/verificar/{sessionId}")
+    public ResponseEntity<String> verificarEstadoPago(@PathVariable String sessionId) {
+        try {
+            Session session = Session.retrieve(sessionId);
+            if ("complete".equals(session.getStatus())) {
+                return ResponseEntity.ok("Pago completado correctamente");
+            } else {
+                return ResponseEntity.ok("Pago no completado. Estado: " + session.getStatus());
+            }
+        } catch (StripeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("Error al verificar el pago: " + e.getMessage());
+        }
+    }
+
 }
