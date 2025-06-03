@@ -46,6 +46,18 @@ public class PublicacionBlogController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<PublicacionBlog>> obtenerPorUsuario(@PathVariable Long usuarioId) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuarioId);
+
+        if (usuarioOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<PublicacionBlog> publicaciones = publicacionBlogRepository.findByAutor(usuarioOpt.get());
+        return ResponseEntity.ok(publicaciones);
+    }
+
     @PostMapping
     public ResponseEntity<PublicacionBlog> crearPublicacion(@RequestBody PublicacionBlogDTO dto) {
         Optional<Usuario> autorOpt = usuarioRepository.findById(dto.getAutorId());

@@ -34,7 +34,6 @@ public class PedidoController {
         this.pedidoRepository = pedidoRepository;
     }
 
-    // ✅ GET todos los pedidos como DTO
     @GetMapping
     public ResponseEntity<List<PedidoResponseDTO>> listar() {
         List<PedidoResponseDTO> pedidos = pedidoService.listarTodos()
@@ -45,7 +44,6 @@ public class PedidoController {
         return ResponseEntity.ok(pedidos);
     }
 
-    // ✅ GET pedido individual como DTO
     @GetMapping("/{id}")
     public ResponseEntity<PedidoResponseDTO> obtener(@PathVariable Long id) {
         Optional<Pedido> pedidoOpt = pedidoService.obtenerPorId(id);
@@ -78,19 +76,6 @@ public class PedidoController {
         return ResponseEntity.noContent().build();
     }
 
-    // 🔁 Método privado para convertir Pedido a PedidoResponseDTO
-    private PedidoResponseDTO convertirAPedidoDTO(Pedido pedido) {
-        PedidoResponseDTO dto = new PedidoResponseDTO();
-        dto.setId(pedido.getId());
-        dto.setFecha(pedido.getFecha());
-        dto.setEstado(pedido.getEstado());
-        dto.setTotal(pedido.getTotal());
-        dto.setClienteNick(pedido.getCliente().getNick());
-        dto.setProductoIds(pedido.getProductoIds());
-        return dto;
-    }
-    
- // GET /api/pedidos/usuario/{usuarioId}
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<PedidoResponseDTO>> obtenerPedidosPorUsuario(@PathVariable Long usuarioId) {
         List<Pedido> pedidos = pedidoService.listarPorUsuarioId(usuarioId);
@@ -101,4 +86,16 @@ public class PedidoController {
         return ResponseEntity.ok(pedidosDTO);
     }
 
+    // ✅ Método para transformar Pedido a PedidoResponseDTO incluyendo clienteId
+    private PedidoResponseDTO convertirAPedidoDTO(Pedido pedido) {
+        PedidoResponseDTO dto = new PedidoResponseDTO();
+        dto.setId(pedido.getId());
+        dto.setFecha(pedido.getFecha());
+        dto.setEstado(pedido.getEstado());
+        dto.setTotal(pedido.getTotal());
+        dto.setClienteNick(pedido.getCliente().getNick());
+        dto.setClienteId(pedido.getCliente().getId()); // 👈 Se añade el clienteId
+        dto.setProductoIds(pedido.getProductoIds());
+        return dto;
+    }
 }

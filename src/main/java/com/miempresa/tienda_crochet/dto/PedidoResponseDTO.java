@@ -12,6 +12,7 @@ public class PedidoResponseDTO {
     private String estado;
     private Double total;
     private String clienteNick;
+    private Long clienteId; 
     private List<Long> productoIds;
 }
 
